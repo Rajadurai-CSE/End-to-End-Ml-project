@@ -1,12 +1,12 @@
 from sklearn.model_selection import train_test_split
-from logger import logging
+from src.logger import logging
 import pandas as pd
 from dataclasses import dataclass
 import os
 import sys
 from src.exception_handling import CustomException
 from data_transformation import data_transformation
-from model_trainer import pick_best_model
+from model_trainer import best_model_finder
 
 @dataclass
 class data_ingestion_config:
@@ -43,9 +43,9 @@ class data_ingestion:
 if __name__ == '__main__':
   obj = data_ingestion()
   obj.ingest()
-  train_df,test_df = data_transformation().intiate_transformation(obj.ingestion_config.train_data_path,obj.ingestion_config.test_data_path)
-
-  print(pick_best_model(train_df,test_df))
+  dt = data_transformation()
+  x_train,x_test =  dt.intiate_transformation(obj.ingestion_config.train_data_path,obj.ingestion_config.test_data_path)
+  print(best_model_finder(train_df=x_train,test_df=x_test).pick_best_model())
 
 
 

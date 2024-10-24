@@ -3,9 +3,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder,LabelEncoder,StandardScaler
 from sklearn.pipeline import Pipeline
 from dataclasses import dataclass
-from logger import logging
-from src.exception_handling import CustomException
 import sys
+from src.logger import logging
+from src.exception_handling import CustomException
+
 import pandas as pd
 import os
 from src.utils import save_preprocessor
@@ -18,24 +19,43 @@ class data_transformation:
   def __init__(self):
     self.data_transformation_cfg = data_transformation_config()
 
-  def transformer(self):
+
+  def transformer(self,cat_features,num_features):
 
     try:
 
+      #For categorical transformation
+
+      cat_pipeline = Pipeline(
+        [
+          ('Mode Imputer',SimpleImputer(strategy="most_frequent")),
+          ('One Hot Encoder',OneHotEncoder(sparse_output=False))
+        ]
+      )
+
+     #For numerical transformation
+
+      num_pipeline = Pipeline(
+        [
+          ('Median Imputer',SimpleImputer(strategy="median")),
+          ('Standard Scaling',StandardScaler())
+        ]
+      )
       
-      one_hot_category = ['parental_level_of_education','race_ethnicity']
-
-      cat_transformer = ColumnTransformer(
+      #Merging two
+      
+      column_transformer = ColumnTransformer(
         transformers = [
-
-          # ('Imputer',SimpleImputer(strategy="most_frequent"),one_hot_features),
-          ('One Hot Encoding',OneHotEncoder(sparse_output=False),one_hot_category),
+          ('cat transformer',cat_pipeline,cat_features),
+          ('num transformer',num_pipeline,num_features)
         ],remainder = 'passthrough'
       )
 
-      cat_transformer.set_output(transform='pandas')
+      column_transformer.set_output(transform='pandas')
 
-      return cat_transformer
+      # transformer.set_output('pandas')
+
+      return column_transformer
     except Exception as e:
       raise CustomException(e,sys)
   
@@ -48,40 +68,35 @@ class data_transformation:
       logging.info('Succesfully Read the data')
       logging.info('Transformation started')
 
+      train_target = train_df['math_score']
+      test_target = test_df['math_score']
 
-      train_df['avg_mark'] = (train_df['math_score'] + train_df['reading_score'] + train_df['writing_score'])//3
-      test_df['avg_mark'] = (test_df['math_score'] + test_df['reading_score'] + test_df['writing_score'])//3
+      train_df = train_df.drop(['math_score'], axis=1)
+      test_df = test_df.drop(['math_score'], axis=1)
 
-      train_df.drop(['math_score','reading_score','writing_score'],axis=1,inplace=True)
-      test_df.drop(['math_score','reading_score','writing_score'],axis=1,inplace=True)
+
+      cat_features = train_df.select_dtypes(include='object').columns
+      num_features = train_df.select_dtypes(exclude='object').columns
+
+      #Convert cat_features values to lower case
+      for i in cat_features:
+        train_df[i] = train_df[i].str.lower()
+        test_df[i] = test_df[i].str.lower()
 
       
-      train_df.loc[train_df['avg_mark'] < 50, 'avg_mark'] = 0
-      train_df.loc[train_df['avg_mark']>=50,'avg_mark'] = 1
-      test_df.loc[test_df['avg_mark'] >= 50, 'avg_mark'] = 1
-      test_df.loc[test_df['avg_mark'] < 50, 'avg_mark'] = 0
+      transformer = self.transformer(cat_features,num_features)
+      x_train_transformed = transformer.fit_transform(train_df)
+    
+      x_test_transformed = transformer.transform(test_df)
 
+      x_train = pd.concat([x_train_transformed,train_target],axis=1)
+      x_test = pd.concat([x_test_transformed,test_target],axis=1)
 
-      
-
-
-
-      #Label Encoding
-      label_encoding = ['lunch','gender','test_preparation_course']
-      le = LabelEncoder()
-      for i in label_encoding:
-        train_df[i] = le.fit_transform(train_df[i])
-        test_df[i] = le.transform(test_df[i])
-        
-      transformer = self.transformer()
-     
-
-      train_df = transformer.fit_transform(train_df)
-      test_df = transformer.transform(test_df)
       logging.info('Transformation Done')
+      
       save_preprocessor(transformer,self.data_transformation_cfg.preprocesser_obj_path)
       
-      return train_df,test_df
+      return x_train,x_test
 
     except Exception as e:
       raise CustomException(e,sys)

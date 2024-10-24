@@ -6,4 +6,5 @@ dill
 xgboost
 catboost
 imbalanced-learn
+flask
 # -e .

@@ -98,8 +98,10 @@ class best_model_finder:
         best_model = max(report, key=lambda k: report[k][1])
         best_model = report[best_model]
 
+
         if best_model[0] >= self.threshold and best_model[1]>=  self.threshold:
            logging.info('Best Model Found')
+           
            save_model(best_model[2],self.model_path)
            
            return f"Best Model Test R2 Score {best_model[1]}"

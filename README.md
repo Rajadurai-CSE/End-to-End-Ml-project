@@ -10,22 +10,22 @@ Overview of the project:
 
 
 Structure:
-     - Artifacts
-        Contains the .csv files and model.pkl, preprocessor.pkl files
-     - Logs
-        Contains the log data
-     - Notebook
-        - EDA.ipynb
-          Through data analysis
-        - model.ipynb
-          Model development notebook
+  - Artifacts
+      Contains the .csv files and model.pkl, preprocessor.pkl files
+  - Logs
+      Contains the log data
+  - Notebook
+    - EDA.ipynb
+      Through data analysis
+    - model.ipynb
+      Model development notebook
 
 Src:
-   Contains the main componenets of the project
-    - Components
-       data_ingestion.py --> Data Ingestion logic
-       data_transformation.py --> Transform data
-       model_trainer.py --> Picking the right model
+  Contains the main componenets of the project
+  - Components
+      data_ingestion.py --> Data Ingestion logic
+      data_transformation.py --> Transform data
+      model_trainer.py --> Picking the right model
 
 templates:
     Frontend part of the application

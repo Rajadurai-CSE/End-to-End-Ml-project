@@ -1,4 +1,5 @@
 End-to-End Machine Learning project
+
 This is project developed following krish naik end to end ml series
 
 Problem Statement : To analyze the factors that influence the student grade and to effectively build a system to predict the math score of the student
@@ -24,7 +25,9 @@ Src:
   Contains the main componenets of the project
   - Components
       data_ingestion.py --> Data Ingestion logic
+    
       data_transformation.py --> Transform data
+    
       model_trainer.py --> Picking the right model
 
 templates:

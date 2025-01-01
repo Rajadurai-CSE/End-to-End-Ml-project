@@ -7,7 +7,7 @@ Problem Statement : To analyze the factors that influence the student grade and 
 Overview of the project:
   - Structing the project
   - Conducting EDA On the data
-  - Using effective model for the problem
+  - Building effective model for the problem
 
 
 Structure:
@@ -17,7 +17,7 @@ Structure:
       Contains the log data
   - Notebook
     - EDA.ipynb
-      Through data analysis
+       Data analysis notebook
     - model.ipynb
       Model development notebook
 

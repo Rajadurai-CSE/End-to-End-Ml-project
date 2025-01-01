@@ -22,16 +22,16 @@ Structure:
       - Model development notebook
 
 Src:
-  -Contains the main componenets of the project
+  - Contains the main componenets of the project
   - Components
       - data_ingestion.py --> Data Ingestion logic
       - data_transformation.py --> Transform data
       - model_trainer.py --> Picking the right model
 
 templates:
-    - Frontend part of the application
+  - Frontend part of the application
 
-app.py
-    - Prediction point 
+app.py:
+  - Prediction point 
 
         
